@@ -1,0 +1,14 @@
+default_platform(:android)
+
+platform :android do
+  desc "Build APK for release"
+  lane :build do
+    gradle(task: "assembleRelease")
+  end
+
+  desc "Deploy to Play Store (requires supply)"
+  lane :release do
+    gradle(task: "assembleRelease")
+    upload_to_play_store(track: 'internal')
+  end
+end

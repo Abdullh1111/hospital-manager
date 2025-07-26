@@ -1,0 +1,58 @@
+name: Enforce Reviewer Screenshot & Comment
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  check-reviewer-feedback:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check for reviewer screenshot and comment on approval only
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const { owner, repo } = context.repo;
+            const review = context.payload.review;
+
+            // Do not do any action if it is not an Approval
+            if (review.state !== 'approved') {
+              console.log('Review is not an approval — skipping.');
+              return;
+            }
+
+            const reviews = await github.paginate(
+              github.rest.pulls.listReviews,
+              { owner, repo, pull_number: prNumber }
+            );
+
+            const comments = await github.paginate(
+              github.rest.issues.listComments,
+              { owner, repo, issue_number: prNumber }
+            );
+
+            // Collect reviewers who approved
+            const approvedReviewers = new Set(
+              reviews.filter(r => r.state === 'APPROVED').map(r => r.user.login)
+            );
+
+            // Check if any approving reviewer left a comment with image
+            let screenshotFound = false;
+            for (const comment of comments) {
+              const hasImage = /!\[.*\]\(.*\.(png|jpg|jpeg|gif)\)/i.test(comment.body);
+              if (hasImage && approvedReviewers.has(comment.user.login)) {
+                screenshotFound = true;
+                break;
+              }
+            }
+
+            if (!screenshotFound) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: prNumber,
+                body: "⚠️ A reviewer approved the PR, but no screenshot was found in comments. Please ensure at least one reviewer uploads a screenshot as part of the review checklist."
+              });
+            }

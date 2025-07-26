@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Fastlane
+        run: |
+          sudo gem install fastlane
+
+      - name: Run Android Fastlane Release
+        run: cd android && fastlane release
+
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+
+      - name: Install Bundler
+        run: gem install bundler
+
+      - name: Install Ruby Gems
+        run: bundle install
+        working-directory: ios
+
+      - name: Install Node.js dependencies
+        run: npm install
+
+      - name: Run iOS Fastlane Release
+        run: bundle exec fastlane release
+        working-directory: ios
