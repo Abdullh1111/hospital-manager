@@ -1,6 +1,5 @@
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import React, {useEffect, useRef, useState} from 'react';
-import {useTranslation} from 'react-i18next';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -19,7 +18,6 @@ import {useSignupViewModel} from '../viewmodels/useSignupViewModel';
 type OtpScreenProps = NativeStackScreenProps<AuthStackParamList, 'Otp'>;
 
 const OtpScreen = ({route, navigation}: OtpScreenProps) => {
-  const {t} = useTranslation();
   const {email, password} = route.params || {};
   const {handleSignupSubmitAfterOTP, signupLoading} =
     useSignupViewModel(navigation);

@@ -1,6 +1,6 @@
 /**
  * Authentication Slice
- * 
+ *
  * This slice manages the authentication state of the application.
  * It handles:
  * - User authentication status
@@ -28,6 +28,9 @@ export interface AuthFormData {
   confirmPassword: string;
   sex: string;
   role: string;
+  country: string;
+  city: string;
+  dob: string;
 }
 
 /**
@@ -40,6 +43,9 @@ const initialAuthFormData: AuthFormData = {
   password: '',
   confirmPassword: '',
   sex: '',
+  country: '',
+  city: '',
+  dob: '',
   role: 'patient',
 };
 
@@ -69,7 +75,7 @@ const initialState: AuthState = {
 
 /**
  * Authentication Slice
- * 
+ *
  * Actions:
  * - loginRequest: Initiates the login process
  * - loginSuccess: Handles successful login
@@ -91,7 +97,10 @@ const authSlice = createSlice({
      * @param state - Current state
      * @param action - Payload containing email and password
      */
-    loginRequest: (state, action: PayloadAction<{email: string; password: string}>) => {
+    loginRequest: (
+      state,
+      action: PayloadAction<{email: string; password: string}>,
+    ) => {
       state.loading = true;
       state.error = null;
     },
@@ -99,7 +108,7 @@ const authSlice = createSlice({
      * Handles successful login
      * @param state - Current state
      */
-    loginSuccess: (state) => {
+    loginSuccess: state => {
       state.isAuthenticated = true;
       state.loading = false;
       state.error = null;
@@ -117,7 +126,7 @@ const authSlice = createSlice({
      * Initiates the signup process
      * @param state - Current state
      */
-    signupRequest: (state) => {
+    signupRequest: state => {
       state.signupLoading = true;
       state.error = null;
     },
@@ -125,7 +134,7 @@ const authSlice = createSlice({
      * Handles successful signup
      * @param state - Current state
      */
-    signupSuccess: (state) => {
+    signupSuccess: state => {
       state.isAuthenticated = true;
       state.signupLoading = false;
       state.error = null;
@@ -151,7 +160,7 @@ const authSlice = createSlice({
      * Handles OTP success (OTP sent or verified)
      * @param state - Current state
      */
-    otpSuccess: (state) => {
+    otpSuccess: state => {
       state.signupLoading = false;
     },
     /**
@@ -160,17 +169,28 @@ const authSlice = createSlice({
      * @param action - Payload containing partial auth form data
      */
     setAuthForm: (state, action: PayloadAction<Partial<AuthFormData>>) => {
-      state.authForm = { ...state.authForm, ...action.payload };
+      state.authForm = {...state.authForm, ...action.payload};
     },
     /**
      * Handles clearing the auth form
      * @param state - Current state
      */
-    clearAuthForm: (state) => {
+    clearAuthForm: state => {
       state.authForm = initialAuthFormData;
     },
   },
 });
 
-export const {loginRequest, loginSuccess, loginFailure, signupRequest, signupSuccess, signupFailure, logout, otpSuccess, setAuthForm, clearAuthForm} = authSlice.actions;
-export default authSlice.reducer; 
+export const {
+  loginRequest,
+  loginSuccess,
+  loginFailure,
+  signupRequest,
+  signupSuccess,
+  signupFailure,
+  logout,
+  otpSuccess,
+  setAuthForm,
+  clearAuthForm,
+} = authSlice.actions;
+export default authSlice.reducer;

@@ -1,36 +1,27 @@
-import React, { useState } from 'react';
+import type {NativeStackScreenProps} from '@react-navigation/native-stack';
+import React, {useState} from 'react';
+import {useTranslation} from 'react-i18next';
 import {
-  View,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  ActivityIndicator,
-  ViewStyle,
+  View,
 } from 'react-native';
-import { useLoginViewModel } from '../viewmodels/useLoginViewModel';
-import { useTranslation } from 'react-i18next';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { AuthStackParamList } from '../navigation/AppNavigator';
-import { COLORS } from '../constants/colors';
-import { PATHS } from '../constants/paths';
 import SubmitButton from '../components/SubmitButton';
+import {COLORS} from '../constants/colors';
+import {PATHS} from '../constants/paths';
+import type {AuthStackParamList} from '../navigation/AppNavigator';
+import {useLoginViewModel} from '../viewmodels/useLoginViewModel';
 
 type LoginScreenProps = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
-const LoginScreen = ({ navigation }: LoginScreenProps) => {
-  const {
-    email,
-    setEmail,
-    password,
-    setPassword,
-    loading,
-    error,
-    handleLogin,
-  } = useLoginViewModel(navigation);
-  const { t } = useTranslation();
+const LoginScreen = ({navigation}: LoginScreenProps) => {
+  const {email, setEmail, password, setPassword, loading, error, handleLogin} =
+    useLoginViewModel(navigation);
+  const {t} = useTranslation();
   const isFormValid = email.trim() && password.trim();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -46,12 +37,14 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
+          placeholderTextColor={COLORS.gray}
           autoCapitalize="none"
           editable={!loading}
         />
         <View style={styles.passwordInputContainer}>
           <TextInput
-            style={[styles.input, { paddingRight: 60, marginBottom: 0 }]}
+            style={[styles.input, {paddingRight: 60, marginBottom: 0}]}
+            placeholderTextColor={COLORS.gray}
             placeholder={t('password', 'Password')}
             value={password}
             onChangeText={setPassword}
@@ -61,9 +54,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           />
           <TouchableOpacity
             style={styles.showHideButtonInside}
-            onPress={() => setShowPassword((prev) => !prev)}
-            disabled={loading}
-          >
+            onPress={() => setShowPassword(prev => !prev)}
+            disabled={loading}>
             <Text style={styles.showHideButtonText}>
               {showPassword ? t('hide') : t('show')}
             </Text>
@@ -72,20 +64,24 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
         <TouchableOpacity
           style={styles.forgotPasswordButton}
           onPress={() => navigation.navigate(PATHS.AUTH.FORGOT_PASSWORD)}>
-          <Text style={styles.forgotPasswordText}>{t('forgotPassword', 'Forgot Password?')}</Text>
+          <Text style={styles.forgotPasswordText}>
+            {t('forgotPassword', 'Forgot Password?')}
+          </Text>
         </TouchableOpacity>
         {error && <Text style={styles.errorText}>{error}</Text>}
         <SubmitButton
           onPress={handleLogin}
           disabled={loading || !isFormValid}
-          loading={loading}
-        >
+          loading={loading}>
           {t('login', 'Login')}
         </SubmitButton>
         <TouchableOpacity
           style={styles.signupButton}
           onPress={() => navigation.navigate(PATHS.AUTH.SIGNUP)}>
-          <Text style={styles.signupButtonText}>{t('dontHaveAccount', "Don't have an account?")}{' '}<Text style={styles.signupLink}>{t('signup', 'Signup')}</Text></Text>
+          <Text style={styles.signupButtonText}>
+            {t('dontHaveAccount', "Don't have an account?")}{' '}
+            <Text style={styles.signupLink}>{t('signup', 'Signup')}</Text>
+          </Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -178,4 +174,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen; 
+export default LoginScreen;
