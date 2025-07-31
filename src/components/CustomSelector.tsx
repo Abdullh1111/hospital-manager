@@ -25,6 +25,7 @@ interface CustomDropdownProps {
   value: string;
   onValueChange: (value: string) => void;
   options: DropdownOption[];
+  label: string;
   placeholder?: string;
   style?: ViewStyle;
   disabled?: boolean;
@@ -40,6 +41,7 @@ const CustomSelector = React.memo(
         placeholder = 'Select an option',
         style,
         disabled = false,
+        label,
       },
       ref,
     ) => {
@@ -72,6 +74,7 @@ const CustomSelector = React.memo(
 
       return (
         <>
+          <Text style={styles.label}>{label}</Text>
           <TouchableOpacity
             style={[styles.dropdown, disabled && styles.disabled, style]}
             onPress={handleOpenDropdown}
@@ -136,6 +139,12 @@ const CustomSelector = React.memo(
 );
 
 const styles = StyleSheet.create({
+  label: {
+    fontSize: 16,
+    color: '#1A2A2B',
+    marginBottom: 5,
+    fontWeight: 500,
+  },
   dropdown: {
     height: 50,
     borderWidth: 1,

@@ -33,13 +33,13 @@ export const useSignupViewModel = (navigation: any) => {
     lastName,
     email,
     password,
-    confirmPassword,
     sex,
     role,
     country,
     city,
     dob,
   } = authForm;
+  console.log(authForm);
 
   const {t} = useTranslation();
 
@@ -69,10 +69,6 @@ export const useSignupViewModel = (navigation: any) => {
   );
   const setRole = React.useCallback(
     (value: string) => dispatch(setAuthForm({role: value})),
-    [dispatch],
-  );
-  const setConfirmPassword = React.useCallback(
-    (value: string) => dispatch(setAuthForm({confirmPassword: value})),
     [dispatch],
   );
   const setCountry = useCallback(
@@ -140,13 +136,13 @@ export const useSignupViewModel = (navigation: any) => {
       );
       return;
     }
-    if (password !== confirmPassword) {
-      Alert.alert(
-        t('missingData', 'Missing Data'),
-        t('errors.passwordsDoNotMatch', 'Passwords do not match'),
-      );
-      return;
-    }
+    // if (password !== confirmPassword) {
+    //   Alert.alert(
+    //     t('missingData', 'Missing Data'),
+    //     t('errors.passwordsDoNotMatch', 'Passwords do not match'),
+    //   );
+    //   return;
+    // }
 
     if (!country) {
       Alert.alert(
@@ -198,7 +194,6 @@ export const useSignupViewModel = (navigation: any) => {
     email,
     sex,
     password,
-    confirmPassword,
     dob,
     city,
     country,
@@ -285,9 +280,11 @@ export const useSignupViewModel = (navigation: any) => {
       emailRegex.test(trimmedEmail) &&
       sex &&
       password.length >= 8 &&
-      password === confirmPassword
+      country &&
+      city &&
+      dob
     );
-  }, [firstName, lastName, email, sex, password, confirmPassword, emailRegex]);
+  }, [firstName, lastName, email, sex, password, emailRegex, country, city, dob]);
 
   // Memoize the returned object to prevent unnecessary re-renders
   return useMemo(
@@ -300,8 +297,6 @@ export const useSignupViewModel = (navigation: any) => {
       setEmail,
       password,
       setPassword,
-      confirmPassword,
-      setConfirmPassword,
       handleSignup,
       sex,
       setSex,
@@ -326,8 +321,6 @@ export const useSignupViewModel = (navigation: any) => {
       setEmail,
       password,
       setPassword,
-      confirmPassword,
-      setConfirmPassword,
       handleSignup,
       sex,
       setSex,

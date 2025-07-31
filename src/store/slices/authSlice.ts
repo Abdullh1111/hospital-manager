@@ -25,7 +25,6 @@ export interface AuthFormData {
   lastName: string;
   email: string;
   password: string;
-  confirmPassword: string;
   sex: string;
   role: string;
   country: string;
@@ -41,7 +40,6 @@ const initialAuthFormData: AuthFormData = {
   lastName: '',
   email: '',
   password: '',
-  confirmPassword: '',
   sex: '',
   country: '',
   city: '',
@@ -99,7 +97,6 @@ const authSlice = createSlice({
      */
     loginRequest: (
       state,
-      action: PayloadAction<{email: string; password: string}>,
     ) => {
       state.loading = true;
       state.error = null;

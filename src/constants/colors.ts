@@ -1,5 +1,5 @@
 export const COLORS = {
-  primary: '#f4511e',
+  primary: '#0BA8AF',
   white: '#fff',
   black: '#000',
   gray: '#aaa',
@@ -8,5 +8,5 @@ export const COLORS = {
   darkGray: '#555',
   error: 'red',
   description: '#666',
-  disabled: '#cccccc',
-}; 
+  disabled: '#E6E7E7',
+};
