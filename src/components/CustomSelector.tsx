@@ -5,7 +5,6 @@ import React, {
   useState,
 } from 'react';
 import {
-  Modal,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,8 +12,9 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import {COLORS} from '../constants/colors';
-import {CustomSelectorRef} from '../types/CustomSelector.interface';
+import { COLORS } from '../constants/colors';
+import { CustomSelectorRef } from '../types/CustomSelector.interface';
+import BottomSheet from './BottomSheet';
 
 interface DropdownOption {
   label: string;
@@ -46,27 +46,30 @@ const CustomSelector = React.memo(
       ref,
     ) => {
       const [isVisible, setIsVisible] = useState(false);
+      const [tempValue, setTempValue] = useState<string>(value);
 
       const selectedOption = useMemo(
         () => options.find(opt => opt.value === value),
         [value, options],
       );
 
-      const handleSelect = useCallback(
-        (option: DropdownOption) => {
-          onValueChange(option.value);
-          setIsVisible(false);
-        },
-        [onValueChange],
-      );
+      const handleSelect = useCallback((option: DropdownOption) => {
+        setTempValue(option.value);
+      }, []);
+
+      const handleSave = () => {
+        if (tempValue !== value) {
+          onValueChange(tempValue);
+        }
+        setIsVisible(false);
+      };
 
       const handleOpenDropdown = useCallback(() => {
         if (!disabled) {
+          setTempValue(value); // Sync current value to temp
           setIsVisible(true);
         }
-      }, [disabled]);
-
-      const handleCloseDropdown = () => setIsVisible(false);
+      }, [disabled, value]);
 
       useImperativeHandle(ref, () => ({
         openDropdown: handleOpenDropdown,
@@ -89,18 +92,16 @@ const CustomSelector = React.memo(
             <Text style={styles.arrow}>▼</Text>
           </TouchableOpacity>
 
-          <Modal
+          <BottomSheet
             visible={isVisible}
-            transparent
-            animationType="slide"
-            onRequestClose={handleCloseDropdown}>
-            <TouchableOpacity
-              style={styles.backdrop}
-              activeOpacity={1}
-              onPress={handleCloseDropdown}
-            />
+            snapPoints={[100 * 0.6, 100 * 0.3, 100 * 0.1, 0]}
+            initialSnapPoint={1}
+            onSnap={(index: number) => {
+              if (index === 0) {
+                setIsVisible(false);
+              }
+            }}>
             <View style={styles.bottomSheet}>
-              <View style={styles.dragHandle} />
               <Text style={styles.sheetTitle}>{placeholder}</Text>
 
               <ScrollView style={styles.optionsScroll}>
@@ -112,11 +113,11 @@ const CustomSelector = React.memo(
                     <Text
                       style={[
                         styles.optionLabel,
-                        option.value === value && styles.selectedLabel,
+                        option.value === tempValue && styles.selectedLabel,
                       ]}>
                       {option.label}
                     </Text>
-                    {option.value === value ? (
+                    {option.value === tempValue ? (
                       <Text style={styles.checkmark}>✓</Text>
                     ) : (
                       <View style={styles.notSelectedMark} />
@@ -127,11 +128,11 @@ const CustomSelector = React.memo(
 
               <TouchableOpacity
                 style={styles.saveButton}
-                onPress={handleCloseDropdown}>
+                onPress={handleSave}>
                 <Text style={styles.saveText}>Save</Text>
               </TouchableOpacity>
             </View>
-          </Modal>
+          </BottomSheet>
         </>
       );
     },
@@ -143,7 +144,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#1A2A2B',
     marginBottom: 5,
-    fontWeight: 500,
+    fontWeight: '500',
   },
   dropdown: {
     height: 50,
@@ -173,19 +174,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: COLORS.gray,
   },
-  backdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-  },
   bottomSheet: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
     backgroundColor: COLORS.white,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    paddingHorizontal: 20,
+    // paddingHorizontal: 20,
     paddingBottom: 30,
     paddingTop: 10,
     maxHeight: '60%',
@@ -237,7 +230,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     borderRadius: 100,
   },
-
   notSelectedMark: {
     width: 25,
     height: 25,

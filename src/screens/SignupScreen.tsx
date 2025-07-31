@@ -52,6 +52,9 @@ const SignupScreen = React.memo(({navigation}: SignupScreenProps) => {
     () => [
       {label: t('male', 'Male'), value: 'male'},
       {label: t('female', 'Female'), value: 'female'},
+
+      {label: t('Non-binary', 'Non-binary'), value: 'non-binary'},
+      {label: t('prefer not to say', 'Prefer not to say'), value: 'prefer-not-to-say'},
     ],
     [t],
   );
@@ -163,7 +166,7 @@ const SignupScreen = React.memo(({navigation}: SignupScreenProps) => {
 
           <View style={styles.passwordInputContainer}>
             <CustomInputText
-              label={t('password', 'Create Password')}
+              label={t('createpassword', 'Create Password')}
               quteText={
                 'Passaword must be at least 8 characters long and include uppercase letters, lowercase letters and numbers'
               }
